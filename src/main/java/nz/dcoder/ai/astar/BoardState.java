@@ -133,11 +133,11 @@ public class BoardState implements Serializable {
 		return ret;
 	}
 
-	int getWidth() {
+	public int getWidth() {
 		return board.length;
 	}
 
-	int getHeight() {
+	public int getHeight() {
 		return board.length > 0 ? board[0].length : 0;
 	}
 	
