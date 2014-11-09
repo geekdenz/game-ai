@@ -4,9 +4,9 @@
  */
 package nz.dcoder.ai.astar;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  *
@@ -18,18 +18,20 @@ public class BoardNode extends Node {
 	public static SortedSet<Tile> tiles;
 	private int x;
 	private int y;
+
 	public BoardNode(int x, int y, Node parent) {
 		super(parent);
 		this.x = x;
 		this.y = y;
 	}
+
 	@Override
 	public Set<Node> getAdjacentNodes() {
-		Set<Node> nodes = new HashSet<>();
-		int smallerX = x-1;
-		int smallerY = y-1;
-		int greaterX = x+1;
-		int greaterY = y+1;
+		Set<Node> nodes = new TreeSet<>();
+		int smallerX = x - 1;
+		int smallerY = y - 1;
+		int greaterX = x + 1;
+		int greaterY = y + 1;
 
 		Tile tile = new Tile(smallerX, y);
 		BoardNode parent = (BoardNode) this.getParent();
@@ -55,37 +57,38 @@ public class BoardNode extends Node {
 			nodes.add(new BoardNode(x, greaterY, this));
 		}
 		/*
-		if (smallerX >= 0 && board[smallerX][y] >= 0) {
-			BoardNode newNode = new BoardNode(smallerX, y, this);
-			if (!newNode.equals(this.getParent())) {
-				nodes.add(newNode);
-			}
-		}
-		if (greaterX < board.length && board[greaterX][y] >= 0) {
-			BoardNode newNode = new BoardNode(greaterX, y, this);
-			if (!newNode.equals(this.getParent())) {
-				nodes.add(newNode);
-			}
-		}
-		if (smallerY >= 0 && board[x][smallerY] >= 0) {
-			BoardNode newNode = new BoardNode(x, smallerY, this);
-			if (!newNode.equals(this.getParent())) {
-				nodes.add(newNode);
-			}
-		}
-		if (greaterY < board.length && board[x][greaterY] >= 0) {
-			BoardNode newNode = new BoardNode(x, greaterY, this);
-			if (!newNode.equals(this.getParent())) {
-				nodes.add(newNode);
-			}
-		}
-		*/
+		 if (smallerX >= 0 && board[smallerX][y] >= 0) {
+		 BoardNode newNode = new BoardNode(smallerX, y, this);
+		 if (!newNode.equals(this.getParent())) {
+		 nodes.add(newNode);
+		 }
+		 }
+		 if (greaterX < board.length && board[greaterX][y] >= 0) {
+		 BoardNode newNode = new BoardNode(greaterX, y, this);
+		 if (!newNode.equals(this.getParent())) {
+		 nodes.add(newNode);
+		 }
+		 }
+		 if (smallerY >= 0 && board[x][smallerY] >= 0) {
+		 BoardNode newNode = new BoardNode(x, smallerY, this);
+		 if (!newNode.equals(this.getParent())) {
+		 nodes.add(newNode);
+		 }
+		 }
+		 if (greaterY < board.length && board[x][greaterY] >= 0) {
+		 BoardNode newNode = new BoardNode(x, greaterY, this);
+		 if (!newNode.equals(this.getParent())) {
+		 nodes.add(newNode);
+		 }
+		 }
+		 */
 		return nodes;
 	}
 
 	public int getX() {
 		return this.x;
 	}
+
 	public int getY() {
 		return this.y;
 	}
@@ -102,6 +105,35 @@ public class BoardNode extends Node {
 	}
 
 	@Override
+	public int hashCode() {
+		int hash = 3;
+		hash = 61 * hash + this.x;
+		hash = 61 * hash + this.y;
+		return hash;
+	}
+
+	@Override
+	public boolean equals(Object other) {
+		if (other instanceof Node) {
+			return this.equals((Node) other);
+		}
+		return false;
+	}
+
+	@Override
+	public int compareTo(Node other) {
+		if (this.cost == other.cost) {
+			if (!this.equals(other)) {
+				BoardNode n1 = (BoardNode) this;
+				BoardNode n2 = (BoardNode) other;
+				return (n1.x == n2.x) ? (n1.y - n2.y) : (n1.x - n2.x);
+			}
+			return 0;
+		}
+		return super.compareTo(other);
+	}
+
+	@Override
 	public double g() {
 		Node parent = getParent();
 		if (parent == null) {
@@ -115,11 +147,10 @@ public class BoardNode extends Node {
 		BoardNode goal = (BoardNode) goalNode;
 		double xDiff = goal.x - this.x;
 		double yDiff = goal.y - this.y;
-		return Math.sqrt(xDiff*xDiff + yDiff*yDiff);
+		return Math.sqrt(xDiff * xDiff + yDiff * yDiff);
 	}
 
 	public String toString() {
-		return ""+ x +","+ y;
+		return "" + x + "," + y;
 	}
-	
 }

@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import javax.swing.event.ListSelectionEvent;
 
 /**
  *
@@ -42,7 +41,8 @@ public class AStarSearch {
 			} else {
 				closed.add(current);
 				open.remove(current);
-				for (Node node : current.getAdjacentNodes()) {
+				Set<Node> adjacent = current.getAdjacentNodes();
+				for (Node node : adjacent) {
 					if (!open.contains(node) && !closed.contains(node)) {
 						// move it to the open list and calculate cost
 						node.calculateCost();
