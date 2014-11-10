@@ -88,5 +88,13 @@ public class BoardSearch {
 		search = new AStarSearch(start, goal);
 		path = search.search();
 		System.out.println(path);
+
+		for (Node node : path) {
+			BoardNode bn = (BoardNode) node;
+			int x = bn.getX();
+			int y = bn.getY();
+			boardState.set(x, y, 9);
+		}
+		System.out.println(boardState);
 	}
 }
