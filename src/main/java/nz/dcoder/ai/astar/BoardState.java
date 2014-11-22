@@ -66,10 +66,10 @@ public class BoardState implements Serializable {
 	}
 
 	public void save() {
-		try (FileOutputStream fileOut =
-				new FileOutputStream("/tmp/boardState.ser");
-				ObjectOutputStream out =
-				new ObjectOutputStream(fileOut)) {
+		try (FileOutputStream fileOut
+				= new FileOutputStream("/tmp/boardState.ser");
+				ObjectOutputStream out
+				= new ObjectOutputStream(fileOut)) {
 			out.writeObject(this);
 			System.out.printf("Serialized data is saved in /tmp/boardState.ser");
 		} catch (IOException i) {
@@ -80,10 +80,10 @@ public class BoardState implements Serializable {
 	public BoardState load() {
 		BoardState myBoardState = null;
 		try (FileInputStream fileIn = new FileInputStream("/tmp/boardState.ser");
-         ObjectInputStream in = new ObjectInputStream(fileIn)) {
-         myBoardState = (BoardState) in.readObject();
-         in.close();
-         fileIn.close();
+				ObjectInputStream in = new ObjectInputStream(fileIn)) {
+			myBoardState = (BoardState) in.readObject();
+			in.close();
+			fileIn.close();
 		} catch (IOException | ClassNotFoundException e) {
 			throw new RuntimeException(e);
 		}
@@ -98,33 +98,34 @@ public class BoardState implements Serializable {
 		} catch (IOException ex) {
 			Logger.getLogger(BoardState.class.getName()).log(Level.SEVERE, null, ex);
 		}
-		int x = 0;
+		int y = 0;
 		for (String line : lines) {
-			if (x == 0) {
-				board = new int[line.length()/2][lines.size()];
+			if (y == 0) {
+				//board = new int[lines.size() / 2][line.length()];
+				board = new int[line.length() / 2][lines.size()];
 			}
 			System.out.println(line);
 			int len = line.length();
-			for (int y = 0; y < len - 1; y+=2) {
-				char byte1 = line.charAt(y);
-				char byte2 = line.charAt(y + 1);
-				String hex = ""+ byte1 + byte2;
+			for (int x = 0; x < len - 1; x += 2) {
+				char byte1 = line.charAt(x);
+				char byte2 = line.charAt(x + 1);
+				String hex = "" + byte1 + byte2;
 				int value = Integer.parseInt(hex, 16);
-				board[x][y/2] = value;
+				board[x / 2][y] = value;
 			}
-			++x;
+			++y;
 		}
 		return this;
 	}
 
 	public String toString() {
 		String ret = "";
-		for (int x = 0; x < board.length; x++) {
-			if (x > 0) {
+		for (int y = 0; y < board[0].length; y++) {
+			if (y > 0) {
 				ret += "\n";
 			}
-			for (int y = 0; y < board[x].length; y++) {
-				if (y > 0) {
+			for (int x = 0; x < board.length; x++) {
+				if (x > 0) {
 					ret += ",";
 				}
 				ret += board[x][y];
@@ -140,5 +141,5 @@ public class BoardState implements Serializable {
 	public int getHeight() {
 		return board.length > 0 ? board[0].length : 0;
 	}
-	
+
 }
