@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package nz.dcoder.ai.astar;
 
 import java.io.FileInputStream;
@@ -41,6 +37,13 @@ public class BoardState implements Serializable {
 
 	public int get(int x, int y) {
 		return board[x][y];
+	}
+
+	public boolean contains(Tile p) {
+		return
+			p.x >= 0 && p.x < this.getWidth() &&
+			p.y >= 0 && p.y < this.getHeight() &&
+			board[p.x][p.y] == 0;
 	}
 
 	public void randomise() {
@@ -118,6 +121,7 @@ public class BoardState implements Serializable {
 		return this;
 	}
 
+	@Override
 	public String toString() {
 		String ret = "";
 		for (int y = 0; y < board[0].length; y++) {

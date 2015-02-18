@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package nz.dcoder.ai.astar;
 
 import java.util.Set;
@@ -10,29 +6,45 @@ import java.util.Set;
  *
  * @author denz
  */
-public abstract class Node implements Comparable<Node>{
-	public static Node goalNode;
-	protected double cost;
-	private Node parent;
-	public abstract Set<Node> getAdjacentNodes();
-	public abstract boolean equals(Node other);
+public abstract class Node<T> implements Comparable<Node<T>> {
+	private final Node<T> parent;
+	private final T start;
+	private final T goal;
+	private final double cost;
 
-	public Node(Node parent) {
+	public Node(Node<T> parent, T start, T goal) {
 		this.parent = parent;
+		this.start = start;
+		this.goal = goal;
+		this.cost = g() + h(goal);
 	}
 
-	public void calculateCost() {
-		cost = g() + h();
-	}
+	public abstract Node<T> getGoalNode();
 
-	public abstract double g();
+	protected abstract double g();
+	protected abstract double h(T goal);
 
-	public abstract double h();
+	public abstract Set<Node<T>> getAdjacentNodes();
 
 	@Override
-	public int compareTo(Node other) {
-		double oCost = other.getCost();
-		return cost == oCost ? 0 : cost < oCost ? -1 : 1;
+	public boolean equals(Object obj) {
+		try {
+			return ((Node) obj).getPosition().equals(this.start);
+		} catch (ClassCastException e) {
+			return false;
+		}
+	}
+
+	@Override
+	public int hashCode() {
+		return start.hashCode();
+	}
+
+	@Override
+	public int compareTo(Node<T> other) {
+		if (this.cost == other.getCost()) return 0;
+		else if (this.cost < other.getCost()) return -1;
+		else return 1;
 	}
 
 	public double getCost() {
@@ -42,7 +54,16 @@ public abstract class Node implements Comparable<Node>{
 	/**
 	 * @return the parent
 	 */
-	public Node getParent() {
-		return parent;
+	public Node<T> getParent() {
+		return this.parent;
+	}
+
+	public T getPosition() {
+		return this.start;
+	}
+
+	public T getGoal() {
+		return this.goal;
 	}
 }
+

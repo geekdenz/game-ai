@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package nz.dcoder.ai.astar;
 
 import java.util.Set;
@@ -12,145 +8,77 @@ import java.util.TreeSet;
  *
  * @author denz
  */
-public class BoardNode extends Node {
+public class BoardNode extends Node<Tile> {
+	private final BoardState board;
 
-	//public static int board[][];
-	public static SortedSet<Tile> tiles;
-	private int x;
-	private int y;
-
-	public BoardNode(int x, int y, Node parent) {
-		super(parent);
-		this.x = x;
-		this.y = y;
+	public BoardNode(Node<Tile> parent, BoardState board, Tile start, Tile goal) {
+		super(parent, start, goal);
+		this.board = board;
 	}
 
 	@Override
-	public Set<Node> getAdjacentNodes() {
-		Set<Node> nodes = new TreeSet<>();
-		int smallerX = x - 1;
-		int smallerY = y - 1;
-		int greaterX = x + 1;
-		int greaterY = y + 1;
+	public Node<Tile> getGoalNode() {
+		Tile goal = this.getGoal();
+		return new BoardNode(this.getParent(), this.board, goal, goal);
+	}
 
-		Tile tile = new Tile(smallerX, y);
-		BoardNode parent = (BoardNode) this.getParent();
-		int parentX = -1;
-		int parentY = -1;
-		if (parent != null) {
-			parentX = parent.x;
-			parentY = parent.y;
+	@Override
+	public Set<Node<Tile>> getAdjacentNodes() {
+		Set<Node<Tile>> nodes = new TreeSet<>();
+
+		Tile pos = this.getPosition();
+		Tile goal = this.getGoal();
+		Tile n = new Tile(pos.x, pos.y - 1);
+		Tile s = new Tile(pos.x, pos.y + 1);
+		Tile e = new Tile(pos.x + 1, pos.y);
+		Tile w = new Tile(pos.x - 1, pos.y);
+
+		Node<Tile> parent = this.getParent();
+		if (!(parent != null && parent.getPosition().equals(pos))) {
+			if (board.contains(n)) nodes.add(new BoardNode(this, board, n, goal));
+			if (board.contains(s)) nodes.add(new BoardNode(this, board, s, goal));
+			if (board.contains(e)) nodes.add(new BoardNode(this, board, e, goal));
+			if (board.contains(w)) nodes.add(new BoardNode(this, board, w, goal));
 		}
-		if (!(parentX != -1 && parentX == tile.x && parentY == tile.y) && tiles.contains(tile)) {
-			nodes.add(new BoardNode(smallerX, y, this));
-		}
-		tile = new Tile(x, smallerY);
-		if (!(parentX != -1 && parentX == tile.x && parentY == tile.y) && tiles.contains(tile)) {
-			nodes.add(new BoardNode(x, smallerY, this));
-		}
-		tile = new Tile(greaterX, y);
-		if (!(parentX != -1 && parentX == tile.x && parentY == tile.y) && tiles.contains(tile)) {
-			nodes.add(new BoardNode(greaterX, y, this));
-		}
-		tile = new Tile(x, greaterY);
-		if (!(parentX != -1 && parentX == tile.x && parentY == tile.y) && tiles.contains(tile)) {
-			nodes.add(new BoardNode(x, greaterY, this));
-		}
-		/*
-		 if (smallerX >= 0 && board[smallerX][y] >= 0) {
-		 BoardNode newNode = new BoardNode(smallerX, y, this);
-		 if (!newNode.equals(this.getParent())) {
-		 nodes.add(newNode);
-		 }
-		 }
-		 if (greaterX < board.length && board[greaterX][y] >= 0) {
-		 BoardNode newNode = new BoardNode(greaterX, y, this);
-		 if (!newNode.equals(this.getParent())) {
-		 nodes.add(newNode);
-		 }
-		 }
-		 if (smallerY >= 0 && board[x][smallerY] >= 0) {
-		 BoardNode newNode = new BoardNode(x, smallerY, this);
-		 if (!newNode.equals(this.getParent())) {
-		 nodes.add(newNode);
-		 }
-		 }
-		 if (greaterY < board.length && board[x][greaterY] >= 0) {
-		 BoardNode newNode = new BoardNode(x, greaterY, this);
-		 if (!newNode.equals(this.getParent())) {
-		 nodes.add(newNode);
-		 }
-		 }
-		 */
+
 		return nodes;
 	}
 
-	public int getX() {
-		return this.x;
-	}
-
-	public int getY() {
-		return this.y;
-	}
-
 	@Override
-	public boolean equals(Node other) {
-		if (other == null) {
-			return false;
-		}
-		BoardNode o = (BoardNode) other;
-		int ox = o.getX();
-		int oy = o.getY();
-		return this.x == ox && this.y == oy;
-	}
+	public int compareTo(Node<Tile> other) {
+		if (this.getCost() != other.getCost()) {
+			return super.compareTo(other);
 
-	@Override
-	public int hashCode() {
-		int hash = 3;
-		hash = 61 * hash + this.x;
-		hash = 61 * hash + this.y;
-		return hash;
-	}
+		} else {
+			if (this.equals(other)) {
+				return 0;
 
-	@Override
-	public boolean equals(Object other) {
-		if (other instanceof Node) {
-			return this.equals((Node) other);
-		}
-		return false;
-	}
-
-	@Override
-	public int compareTo(Node other) {
-		if (this.cost == other.cost) {
-			if (!this.equals(other)) {
-				BoardNode n1 = (BoardNode) this;
-				BoardNode n2 = (BoardNode) other;
+			} else {
+				Tile n1 = this.getPosition();
+				Tile n2 = other.getPosition();
 				return (n1.x == n2.x) ? (n1.y - n2.y) : (n1.x - n2.x);
 			}
-			return 0;
 		}
-		return super.compareTo(other);
 	}
 
 	@Override
-	public double g() {
-		Node parent = getParent();
-		if (parent == null) {
-			return 1.0;
-		}
-		return parent.g() + 1.0;
+	protected double g() {
+		Node<Tile> parent = getParent();
+		if (parent == null) return 1.0; else return parent.g() + 1.0;
 	}
 
 	@Override
-	public double h() {
-		BoardNode goal = (BoardNode) goalNode;
-		double xDiff = goal.x - this.x;
-		double yDiff = goal.y - this.y;
+	protected double h(Tile goal) {
+		Tile here = this.getPosition();
+		double xDiff = goal.x - here.x;
+		double yDiff = goal.y - here.y;
 		return Math.sqrt(xDiff * xDiff + yDiff * yDiff);
 	}
 
+	@Override
 	public String toString() {
-		return "" + x + "," + y;
+		Tile here = this.getPosition();
+		return "(" + here.x + ", " + here.y + ")";
 	}
 }
+
