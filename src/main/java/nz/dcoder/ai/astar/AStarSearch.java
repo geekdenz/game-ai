@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package nz.dcoder.ai.astar;
 
 import java.util.ArrayList;
@@ -16,49 +12,57 @@ import java.util.TreeSet;
  *
  * @author denz
  */
-public class AStarSearch {
-	private Node startNode;
-	private Node goalNode;
-	public AStarSearch(Node startNode, Node goalNode) {
+public class AStarSearch<T> {
+	private final Node<T> startNode;
+	private final Node<T> goalNode;
+
+	public AStarSearch(Node<T> startNode) {
 		this.startNode = startNode;
-		this.goalNode = goalNode;
-		Node.goalNode = goalNode;
+		this.goalNode = startNode.getGoalNode();
 	}
-	public List<Node> search() {
-		List<Node> nodeList = new ArrayList<>();
-		SortedSet<Node> open = new TreeSet<>();
-		Set<Node> closed = new HashSet<>();
-		Node current;// = startNode;
+
+	public List<Node<T>> search() {
+
+		List<Node<T>> nodeList = new ArrayList<>();
+		SortedSet<Node<T>> open = new TreeSet<>();
+		Set<Node<T>> closed = new HashSet<>();
+
+		Node<T> current;
 		open.add(startNode);
-		//closed.add(startNode);
-		Node lastNode = null;
+		Node<T> lastNode = null;
+
 		while (!open.isEmpty()) {
 			current = open.first();
+
 			if (current.equals(goalNode)) {
 				// path complete
 				lastNode = current;
 				break;
+
 			} else {
 				closed.add(current);
 				open.remove(current);
-				Set<Node> adjacent = current.getAdjacentNodes();
-				for (Node node : adjacent) {
+				Set<Node<T>> adjacent = current.getAdjacentNodes();
+				for (Node<T> node : adjacent) {
 					if (!open.contains(node) && !closed.contains(node)) {
-						// move it to the open list and calculate cost
-						node.calculateCost();
-						//closed.remove(node);
+						// move it to the open list
 						open.add(node);
 					}
 				}
 			}
 		}
-		Node parent;
+
+		Node<T> parent;
+
 		do {
 			parent = lastNode.getParent();
 			nodeList.add(lastNode);
 			lastNode = parent;
 		} while (parent != null);
+
 		Collections.reverse(nodeList);
+
 		return nodeList;
 	}
 }
+

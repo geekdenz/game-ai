@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package nz.dcoder.ai.astar;
 
 import javax.vecmath.Point2i;
@@ -27,3 +23,4 @@ public class Tile extends Point2i implements Comparable<Tile> {
 		return this.x == o.x && this.y == o.y;
 	}
 }
+
