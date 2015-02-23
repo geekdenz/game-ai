@@ -21,8 +21,8 @@ public abstract class Node<T> implements Comparable<Node<T>> {
 
 	public abstract Node<T> getGoalNode();
 
-	protected abstract double g();
-	protected abstract double h(T goal);
+	public abstract double g();
+	public abstract double h(T goal);
 
 	public abstract Set<Node<T>> getAdjacentNodes();
 

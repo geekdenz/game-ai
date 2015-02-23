@@ -62,13 +62,13 @@ public class BoardNode extends Node<Tile> {
 	}
 
 	@Override
-	protected double g() {
+	public double g() {
 		Node<Tile> parent = getParent();
 		if (parent == null) return 1.0; else return parent.g() + 1.0;
 	}
 
 	@Override
-	protected double h(Tile goal) {
+	public double h(Tile goal) {
 		Tile here = this.getPosition();
 		double xDiff = goal.x - here.x;
 		double yDiff = goal.y - here.y;
