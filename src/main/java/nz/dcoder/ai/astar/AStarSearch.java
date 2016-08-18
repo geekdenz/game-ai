@@ -52,6 +52,9 @@ public class AStarSearch<T> {
 			}
 		}
 
+		// couldn't find a path
+		if (lastNode == null) return new ArrayList<>();
+
 		Node<T> parent;
 
 		do {
