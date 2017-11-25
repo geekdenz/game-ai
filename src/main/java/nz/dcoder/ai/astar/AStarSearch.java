@@ -16,16 +16,16 @@ public class AStarSearch<T> {
 	private final Node<T> startNode;
 	private final Node<T> goalNode;
 
-	public AStarSearch(Node<T> startNode) {
+	public AStarSearch(final Node<T> startNode) {
 		this.startNode = startNode;
 		this.goalNode = startNode.getGoalNode();
 	}
 
 	public List<Node<T>> search() {
 
-		List<Node<T>> nodeList = new ArrayList<>();
-		SortedSet<Node<T>> open = new TreeSet<>();
-		Set<Node<T>> closed = new HashSet<>();
+		final List<Node<T>> nodeList = new ArrayList<>();
+		final SortedSet<Node<T>> open = new TreeSet<>();
+		final Set<Node<T>> closed = new HashSet<>();
 
 		Node<T> current;
 		open.add(startNode);
@@ -42,8 +42,8 @@ public class AStarSearch<T> {
 			} else {
 				closed.add(current);
 				open.remove(current);
-				Set<Node<T>> adjacent = current.getAdjacentNodes();
-				for (Node<T> node : adjacent) {
+				final Set<Node<T>> adjacent = current.getAdjacentNodes();
+				for (final Node<T> node : adjacent) {
 					if (!open.contains(node) && !closed.contains(node)) {
 						// move it to the open list
 						open.add(node);

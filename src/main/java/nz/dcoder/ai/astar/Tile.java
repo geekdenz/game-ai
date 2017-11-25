@@ -1,26 +1,38 @@
 package nz.dcoder.ai.astar;
 
-import javax.vecmath.Point2i;
-
 /**
  *
  * @author denz
  */
-public class Tile extends Point2i implements Comparable<Tile> {
-	boolean isObstacle = false;
-	public Tile(int x, int y) {
+public class Tile implements Comparable<Tile> {
+	public final int x;
+	public final int y;
+
+	public Tile(final int x, final int y) {
 		this.x = x;
 		this.y = y;
 	}
 
 	@Override
-	public int compareTo(Tile o) {
+	public int compareTo(final Tile o) {
 		int ox = o.x;
 		int oy = o.y;
 		return this.x == ox ? this.y - oy : this.x - ox;
 	}
-	public boolean equals(Tile o) {
-		return this.x == o.x && this.y == o.y;
+
+	@Override
+	public int hashCode() {
+		return x + y;
+	}
+
+	@Override
+	public boolean equals(final Object o) {
+		if (o == null) return false;
+		else if (!(o instanceof Tile)) return false;
+		else {
+			final Tile ot = (Tile) o;
+			return this.x == ot.x && this.y == ot.y;
+		}
 	}
 }
 
