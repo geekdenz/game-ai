@@ -31,15 +31,15 @@ public class BoardState implements Serializable {
 		}
 	}
 
-	public void set(int x, int y, int value) {
+	public void set(final int x, final int y, final int value) {
 		board[x][y] = value;
 	}
 
-	public int get(int x, int y) {
+	public int get(final int x, final int y) {
 		return board[x][y];
 	}
 
-	public boolean contains(Tile p) {
+	public boolean contains(final Tile p) {
 		return
 			p.x >= 0 && p.x < this.getWidth() &&
 			p.y >= 0 && p.y < this.getHeight() &&
@@ -54,55 +54,53 @@ public class BoardState implements Serializable {
 		}
 	}
 
-	public static void main(String args[]) {
-		BoardState boardState = new BoardState();
+	public static void main(final String args[]) {
+		final BoardState boardState = new BoardState();
 		boardState.randomise();
 		boardState.save();
-		BoardState loaded = new BoardState().load();
-		String bsWritten = boardState.toString();
-		String bsRead = loaded.toString();
+		final BoardState loaded = new BoardState().load();
+		final String bsWritten = boardState.toString();
+		final String bsRead = loaded.toString();
 		System.out.println(bsRead);
 		System.out.println(bsRead.equals(bsWritten) ? "EQUAL" : "DIFF");
 
-		BoardState readState = new BoardState();
+		final BoardState readState = new BoardState();
 		readState.load("board.map");
 	}
 
 	public void save() {
-		try (FileOutputStream fileOut
+		try (final FileOutputStream fileOut
 				= new FileOutputStream("/tmp/boardState.ser");
 				ObjectOutputStream out
 				= new ObjectOutputStream(fileOut)) {
 			out.writeObject(this);
 			System.out.printf("Serialized data is saved in /tmp/boardState.ser");
-		} catch (IOException i) {
+		} catch (final IOException i) {
 			throw new RuntimeException(i);
 		}
 	}
 
 	public BoardState load() {
-		BoardState myBoardState = null;
-		try (FileInputStream fileIn = new FileInputStream("/tmp/boardState.ser");
+		try (final FileInputStream fileIn = new FileInputStream("/tmp/boardState.ser");
 				ObjectInputStream in = new ObjectInputStream(fileIn)) {
-			myBoardState = (BoardState) in.readObject();
-			in.close();
-			fileIn.close();
-		} catch (IOException | ClassNotFoundException e) {
+			return (BoardState) in.readObject();
+		} catch (final IOException | ClassNotFoundException e) {
 			throw new RuntimeException(e);
 		}
-		return myBoardState;
 	}
 
-	public BoardState load(String mapFile) {
+	public BoardState load(final String mapFile) {
+		final Path path = FileSystems.getDefault().getPath("", mapFile);
+
 		List<String> lines = null;
-		Path path = FileSystems.getDefault().getPath("", mapFile);
 		try {
 			lines = Files.readAllLines(path, Charset.defaultCharset());
-		} catch (IOException ex) {
+		} catch (final IOException ex) {
 			Logger.getLogger(BoardState.class.getName()).log(Level.SEVERE, null, ex);
 		}
+
 		int y = 0;
-		for (String line : lines) {
+		for (final String line : lines) {
 			if (y == 0) {
 				//board = new int[lines.size() / 2][line.length()];
 				board = new int[line.length() / 2][lines.size()];
@@ -110,10 +108,10 @@ public class BoardState implements Serializable {
 			System.out.println(line);
 			int len = line.length();
 			for (int x = 0; x < len - 1; x += 2) {
-				char byte1 = line.charAt(x);
-				char byte2 = line.charAt(x + 1);
-				String hex = "" + byte1 + byte2;
-				int value = Integer.parseInt(hex, 16);
+				final char byte1 = line.charAt(x);
+				final char byte2 = line.charAt(x + 1);
+				final String hex = "" + byte1 + byte2;
+				final int value = Integer.parseInt(hex, 16);
 				board[x / 2][y] = value;
 			}
 			++y;
@@ -123,19 +121,19 @@ public class BoardState implements Serializable {
 
 	@Override
 	public String toString() {
-		String ret = "";
+		final StringBuilder ret = new StringBuilder();
 		for (int y = 0; y < board[0].length; y++) {
 			if (y > 0) {
-				ret += "\n";
+				ret.append("\n");
 			}
 			for (int x = 0; x < board.length; x++) {
 				if (x > 0) {
-					ret += ",";
+					ret.append(",");
 				}
-				ret += board[x][y];
+				ret.append(board[x][y]);
 			}
 		}
-		return ret;
+		return ret.toString();
 	}
 
 	public int getWidth() {

@@ -12,7 +12,7 @@ public abstract class Node<T> implements Comparable<Node<T>> {
 	private final T goal;
 	private final double cost;
 
-	public Node(Node<T> parent, T start, T goal) {
+	public Node(final Node<T> parent, final T start, final T goal) {
 		this.parent = parent;
 		this.start = start;
 		this.goal = goal;
@@ -21,16 +21,16 @@ public abstract class Node<T> implements Comparable<Node<T>> {
 
 	public abstract Node<T> getGoalNode();
 
-	protected abstract double g();
-	protected abstract double h(T goal);
+	public abstract double g();
+	public abstract double h(final T goal);
 
 	public abstract Set<Node<T>> getAdjacentNodes();
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		try {
 			return ((Node) obj).getPosition().equals(this.start);
-		} catch (ClassCastException e) {
+		} catch (final ClassCastException e) {
 			return false;
 		}
 	}
@@ -41,7 +41,7 @@ public abstract class Node<T> implements Comparable<Node<T>> {
 	}
 
 	@Override
-	public int compareTo(Node<T> other) {
+	public int compareTo(final Node<T> other) {
 		if (this.cost == other.getCost()) return 0;
 		else if (this.cost < other.getCost()) return -1;
 		else return 1;
